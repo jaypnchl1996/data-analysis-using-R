@@ -1,11 +1,10 @@
 ---
-
 title: "Data Analysis using R"
 author: "Group 10"
 date: "`r Sys.Date()`"
 output: pdf_document
-
 ---
+
 
 
 
@@ -142,7 +141,14 @@ ggplot(df, aes(x = Salesperson, y = Amount_numeric, fill = Salesperson)) +
   ggtitle("Bar Plot of Salesperson vs. Amount")
 ```
 
+
+
 ## **16. Correlation Calculation**
 ```{r}
 correlation <- cor(df$Amount_numeric, df$Shipment_Count, use = "complete.obs", method = "pearson")
 print(correlation)
+```
+## GitHub Repository
+
+You can find the full code and dataset on our [GitHub Repository, CLICK HERE!](https://github.com/jaypnchl1996/data-analysis-using-R).
+

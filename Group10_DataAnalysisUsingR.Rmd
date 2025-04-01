@@ -1,0 +1,148 @@
+---
+
+title: "Data Analysis using R"
+author: "Group 10"
+date: "`r Sys.Date()`"
+output: pdf_document
+
+---
+
+
+
+```{r setup, include=FALSE}
+# Load required libraries
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+```
+
+## **1. Load the Dataset**
+```{r}
+# Import dataset
+df <- read.csv("D:/c.csv", stringsAsFactors = FALSE)
+
+# Print dataset structure
+str(df)
+```
+
+## **2. List Variables in the Dataset**
+```{r}
+colnames(df)
+```
+
+## **3. Display the First 15 Rows**
+```{r}
+head(df, 15)
+```
+
+## **4. Create a User-Defined Function**
+```{r}
+total_sales <- function(x) {
+  total_sales_made <- sum(x, na.rm = TRUE)
+  return(total_sales_made)
+}
+
+df$Amount_clean <- gsub("[\\$,]", "", df$Amount, perl = TRUE)
+df$Amount_numeric <- as.numeric(df$Amount_clean)
+y <- total_sales(df$Amount_numeric)
+print(y)
+```
+
+## **5. Remove Missing Values**
+```{r}
+df <- df %>% drop_na()
+print("Data after removing missing values:")
+head(df, 10)
+```
+
+## **6. Remove Duplicates**
+```{r}
+df <- df %>% distinct()
+print("Data after removing duplicates:")
+head(df, 10)
+```
+
+## **7. Filter Data (Amount > 5000)**
+```{r}
+df_filtered <- df %>% filter(Amount_numeric > 5000)
+print("Filtered data (Amount > 5000):")
+head(df_filtered, 10)
+```
+
+## **8. Sort Data by Amount (Descending Order)**
+```{r}
+df <- df %>% arrange(desc(Amount_numeric))
+print("Sorted Data:")
+head(df, 10)
+```
+
+## **9. Rename Columns**
+```{r}
+df <- df %>% rename(Salesperson = Sales.Person, Shipment_Count = Boxes.Shipped)
+print("Renamed Columns:")
+head(df, 10)
+```
+
+## **10. Add a New Column**
+```{r}
+df <- df %>% mutate(Double_Amount = Amount_numeric * 2)
+print("New Column Added:")
+head(df, 10)
+```
+
+## **11. Create a Training Set**
+```{r}
+set.seed(123)
+train_index <- sample(1:nrow(df), 0.7 * nrow(df))
+train_set <- df[train_index, ]
+test_set <- df[-train_index, ]
+
+print("Training Set (First 10 rows):")
+head(train_set, 10)
+
+print("Test Set (First 10 rows):")
+head(test_set, 10)
+```
+
+## **12. Summary Statistics**
+```{r}
+summary(df)
+```
+
+## **13. Statistical Calculations**
+```{r}
+mean_value <- mean(df$Amount_numeric, na.rm = TRUE)
+median_value <- median(df$Amount_numeric, na.rm = TRUE)
+
+mode_func <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+mode_value <- mode_func(df$Amount_numeric)
+range_value <- range(df$Amount_numeric, na.rm = TRUE)
+
+print(mean_value)
+print(median_value)
+print(mode_value)
+print(range_value)
+```
+
+## **14. Scatter Plot**
+```{r}
+ggplot(df, aes(x = Shipment_Count, y = Amount_numeric)) +
+  geom_point() +
+  ggtitle("Scatter Plot of Shipment Count vs. Amount")
+```
+
+## **15. Bar Plot**
+```{r}
+ggplot(df, aes(x = Salesperson, y = Amount_numeric, fill = Salesperson)) +
+  geom_bar(stat = "identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("Bar Plot of Salesperson vs. Amount")
+```
+
+## **16. Correlation Calculation**
+```{r}
+correlation <- cor(df$Amount_numeric, df$Shipment_Count, use = "complete.obs", method = "pearson")
+print(correlation)
